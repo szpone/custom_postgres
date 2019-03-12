@@ -15,6 +15,5 @@ while not is_ready:
     except:
         is_ready = False
 
-print(is_ready)
 if is_ready:
     os.execvp('docker-entrypoint.sh', ('docker-entrypoint.sh', *sys.argv[1:]))
