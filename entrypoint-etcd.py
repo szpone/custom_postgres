@@ -16,18 +16,17 @@ setup_completed = False
 is_ready = False
 client = etcd.Client(host='etcd', port=2379, allow_reconnect=True)
 
-try:
-    client.read('/setup_completed')
-    setup_completed = True
-except etcd.EtcdKeyNotFound:
-    setup_completed = False
-    client.write('/django', secret_key)
-    client.write('/db_data/user', db_user)
-    client.write('/db_data/name', db_name)
-    client.write('/db_data/pswd', db_password)
-    client.write('/setup_completed', 1)
-
-
+while not setup_completed:
+    try:
+        client.read('/setup_completed')
+        setup_completed = True
+    except etcd.EtcdKeyNotFound:
+        setup_completed = False
+        client.write('/django', secret_key)
+        client.write('/db_data/user', db_user)
+        client.write('/db_data/name', db_name)
+        client.write('/db_data/pswd', db_password)
+        client.write('/setup_completed', 1)
 
 if setup_completed:
 
