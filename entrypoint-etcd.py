@@ -30,14 +30,10 @@ while not setup_completed:
 
 if setup_completed:
 
-    while not is_ready:
-        try:
-            os.environ['POSTGRES_USER'] = client.read('/db_data/user').value
-            os.environ['POSTGRES_DB'] = client.read('/db_data/name').value
-            os.environ['POSTGRES_PASSWORD'] = client.read('/db_data/pswd').value
-            is_ready = True
-        except etcd.EtcdKeyNotFound:
-            is_ready = False
+    os.environ['POSTGRES_USER'] = client.read('/db_data/user').value
+    os.environ['POSTGRES_DB'] = client.read('/db_data/name').value
+    os.environ['POSTGRES_PASSWORD'] = client.read('/db_data/pswd').value
+    is_ready = True
 
 if is_ready:
     os.execvp('docker-entrypoint.sh', ('docker-entrypoint.sh', *sys.argv[1:]))
