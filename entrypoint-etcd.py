@@ -5,26 +5,25 @@ import sys
 from secrets import choice
 from string import ascii_letters, digits
 
-alphabet = ascii_letters + digits
+pswd  = ascii_letters + digits
 
-secret_key = ''.join(choice(alphabet) for i in range(20))
-db_name = ''.join(choice(alphabet) for i in range(20))
-db_user = ''.join(choice(alphabet) for i in range(20))
-db_password = ''.join(choice(alphabet) for i in range(20))
+secret_key = ''.join(choice(pswd) for i in range(20))
+db_password = ''.join(choice(pswd) for i in range(20))
 
 setup_completed = False
 is_ready = False
 client = etcd.Client(host='etcd', port=2379, allow_reconnect=True)
 
 while not setup_completed:
+
     try:
         client.read('/setup_completed')
         setup_completed = True
     except etcd.EtcdKeyNotFound:
         setup_completed = False
         client.write('/django', secret_key)
-        client.write('/db_data/user', db_user)
-        client.write('/db_data/name', db_name)
+        client.write('/db_data/user', 'admin')
+        client.write('/db_data/name', 'baza')
         client.write('/db_data/pswd', db_password)
         client.write('/setup_completed', 1)
 
